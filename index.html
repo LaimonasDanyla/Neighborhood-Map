@@ -1,8 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Neighborhood map project</title>
-<meta charset="UTF-8">
+<style>
+      #map, #listview {
+        height: 600px;
+       }
+       #listview{
+        background-color: 	#363636;
+       }
+
+</style>
 
 <!--Add bootsrap links-->
 <!-- Latest compiled and minified CSS -->
@@ -16,7 +27,23 @@
 
 </head>
 <body>
+    <div class="container-fluid">
+      <div class="col-md-2" id="listview">
+        col-md-2
+      </div>
+      <div class="col-md-10" id="map">
+        col-md-10
+      </div>
+    </div>
 
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script async defer
+      src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyAN5t62HzSbKb7KGiVMTiQZ-7dkJ4GcKx4&v=3&callback=initMap">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/knockout-3.4.1.js"></script>
+    <script src="js/app.js"></script>
 </body>
 
 </html>
