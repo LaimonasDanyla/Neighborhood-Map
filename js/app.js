@@ -36,7 +36,8 @@ function initAutocomplete() {
           });
           markers = [];
 
-          // For each place, get the icon, name and location.
+          // For each place, get the icon, name, and infowindow.
+          var infowindow = new google.maps.InfoWindow();
           var bounds = new google.maps.LatLngBounds();
           //Define place list to be used in listview
           var placeList = document.getElementById('places');
@@ -54,12 +55,13 @@ function initAutocomplete() {
             };
 
             // Create a marker for each place.
-            markers.push(new google.maps.Marker({
+            var marker = new google.maps.Marker({
               map: map,
               icon: icon,
               title: place.name,
               position: place.geometry.location
-            }));
+            });
+            markers.push(marker);
             //add searchnresults to place listview
             placeList.innerHTML += '<li>' + place.name + '</li>';
 
@@ -68,6 +70,21 @@ function initAutocomplete() {
               bounds.union(place.geometry.viewport);
             } else {
               bounds.extend(place.geometry.location);
+            };
+            //open infowindow of clicked marker (ref.: google API udacity course)
+            marker.addListener('click', function() {
+            populateInfoWindow(this, infowindow);
+            });
+            function populateInfoWindow(marker, infowindow){
+              if(infowindow.markers != marker) {
+                infowindow.markers = marker;
+                infowindow.setContent('<div>' + marker.title + '</div>');
+                infowindow.open(map, marker);
+                //clear marker porperty when window is closed
+                infowindow.addListener('closeclick', function() {
+                  infowindow.marker = null;
+                });
+              }
             }
           });
           map.fitBounds(bounds);
