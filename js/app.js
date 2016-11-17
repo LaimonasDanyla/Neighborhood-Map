@@ -1,7 +1,12 @@
+
+
+
+
 //Create map with search box
 //initial code from https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
 
 var kaunas = {lat: 54.898521, lng: 23.903597};
+
 
 function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -24,11 +29,11 @@ function initAutocomplete() {
         //Define place list to be used in listview
         var placeList = document.getElementById('places');
 
-
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
+          var places;
+          places = searchBox.getPlaces();
 
           if (places.length == 0) {
             return;
@@ -40,7 +45,7 @@ function initAutocomplete() {
           // Clear old list with the new search.
           placeList.innerHTML = "";
           });
-          
+
           markers = [];
 
           // For each place, get the icon, name, and infowindow.
@@ -52,6 +57,7 @@ function initAutocomplete() {
               console.log("Returned place contains no geometry");
               return;
             }
+
             var icon = {
               url: place.icon,
               size: new google.maps.Size(71, 71),
@@ -77,6 +83,7 @@ function initAutocomplete() {
             } else {
               bounds.extend(place.geometry.location);
             };
+
             //open infowindow of clicked marker
             //REF ref.: google maps API Udacity course
             marker.addListener('click', function() {
@@ -97,3 +104,4 @@ function initAutocomplete() {
           map.fitBounds(bounds);
         });
       }
+    
