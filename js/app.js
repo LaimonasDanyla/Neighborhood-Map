@@ -1,11 +1,11 @@
 //Create map with search box
 //initial code from https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
 
-var pyrmont = {lat: -33.866, lng: 151.196};
+var kaunas = {lat: 54.898521, lng: 23.903597};
 
 function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
-          center: pyrmont,
+          center: kaunas,
           zoom: 13,
           mapTypeId: 'roadmap'
         });
@@ -21,6 +21,10 @@ function initAutocomplete() {
         });
 
         var markers = [];
+        //Define place list to be used in listview
+        var placeList = document.getElementById('places');
+
+
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
@@ -33,14 +37,16 @@ function initAutocomplete() {
           // Clear out the old markers.
           markers.forEach(function(marker) {
             marker.setMap(null);
+          // Clear old list with the new search.
+          placeList.innerHTML = "";
           });
+          
           markers = [];
 
           // For each place, get the icon, name, and infowindow.
           var infowindow = new google.maps.InfoWindow();
           var bounds = new google.maps.LatLngBounds();
-          //Define place list to be used in listview
-          var placeList = document.getElementById('places');
+
           places.forEach(function(place) {
             if (!place.geometry) {
               console.log("Returned place contains no geometry");
@@ -71,7 +77,8 @@ function initAutocomplete() {
             } else {
               bounds.extend(place.geometry.location);
             };
-            //open infowindow of clicked marker (ref.: google API udacity course)
+            //open infowindow of clicked marker
+            //REF ref.: google maps API Udacity course
             marker.addListener('click', function() {
             populateInfoWindow(this, infowindow);
             });
