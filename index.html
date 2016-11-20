@@ -6,16 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Neighborhood map project</title>
 <style>
-      .container-fluid {
-        height: 400px;
-        margin: 0;
-        padding: 0;
+      body {
+        100%;
       }
-      #map, #listview {
-        height: 100%;
-        padding: 0px;
-        margin-top: 5px;
+      .container-fluid{
+        margin: 0px;
+      }
+
+       #listview {
+         height:100%;
+         position: absolute;
        }
+       #map {
+         height: 400px;
+         padding: 0px;
+         margin-top: 5px;
+        }
+
        #places{
       font-size: 12px;
        }
@@ -34,14 +41,15 @@
 </head>
 <body>
     <div class="container-fluid">
-      <div class="col-md-2" id="listview">
-        <input id="pac-input" class="controls" type="text" placeholder="Search Box" value="Restaurant Kaunas Lithuania" autofocus>
-        <h2>Results<h2>
-          <ul id="places"></ul>
-      </div>
-      <div class="col-md-10" id="map">
-      </div>
+    <div class="col-md-12" id="map">
     </div>
+    <div class="col-md-2" id="listview">
+      <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+      <h2>Results<h2>
+        <ul id="places"></ul>
+      </div>
+
+  </div>
 
 
 
