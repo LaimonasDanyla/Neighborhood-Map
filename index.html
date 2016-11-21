@@ -9,16 +9,15 @@
       body {
         100%;
       }
-      .container-fluid{
+      row {
         margin: 0px;
       }
 
        #listview {
          height:100%;
-         position: absolute;
        }
        #map {
-         height: 400px;
+         height:400px;
          padding: 0px;
          margin-top: 5px;
         }
@@ -41,14 +40,14 @@
 </head>
 <body>
     <div class="container-fluid">
-    <div class="col-md-12" id="map">
-    </div>
-    <div class="col-md-2" id="listview">
-      <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-      <h2>Results<h2>
-        <ul id="places"></ul>
+      <div class="row">
+        <div class="col-md-2" id="listview">
+          <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+            <h2>Results<h2>
+              <ul id="places"></ul>
+          </div>
+          <div class="col-md-10" id="map"></div>
       </div>
-
   </div>
 
 

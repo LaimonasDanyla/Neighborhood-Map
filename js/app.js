@@ -35,6 +35,10 @@ function initAutocomplete() {
         var bounds = new google.maps.LatLngBounds();
         infowindow = new google.maps.InfoWindow();
 
+        // Create a "highlighted location" marker color for when the user
+        // mouses over the marker.
+        var highlightedIcon = makeMarkerIcon('FFFF24')
+
 
         var service = new google.maps.places.PlacesService(map);
         service.textSearch(request, callback);
@@ -60,6 +64,7 @@ function initAutocomplete() {
               marker = new google.maps.Marker({
               map: map,
               icon: icon,
+              animation: google.maps.Animation.DROP,
               title: places.name,
               position: places.geometry.location
               });
@@ -69,6 +74,19 @@ function initAutocomplete() {
               //REF ref.: google maps API Udacity course
               marker.addListener('click', function() {
                 populateInfoWindow(this, infowindow);
+              });
+
+              // Define default icon.
+              var defaultIcon = marker.icon;
+
+              // Two event listeners - one for mouseover, one for mouseout,
+              // to change the colors back and forth.
+              marker.addListener('mouseover', function() {
+                this.setIcon(highlightedIcon);
+              });
+              //Return to default marker icon at mouseout.
+              marker.addListener('mouseout', function() {
+                this.setIcon(defaultIcon);
               });
 
               function populateInfoWindow(marker, infowindow){
@@ -86,6 +104,20 @@ function initAutocomplete() {
             }
           }
         }
+        // This function takes in a COLOR, and then creates a new marker
+        // icon of that color. The icon will be 21 px wide by 34 high, have an origin
+        // of 0, 0 and be anchored at 10, 34).
+        function makeMarkerIcon(markerColor) {
+          var markerImage = new google.maps.MarkerImage(
+            'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+            '|40|_|%E2%80%A2',
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(10, 34),
+            new google.maps.Size(21,34));
+            return markerImage;
+          }
+
 }
 
 /*
