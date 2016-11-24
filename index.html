@@ -46,7 +46,12 @@
             <h2>Results<h2>
               <ul id="places"></ul>
           </div>
-          <div class="col-md-10" id="map"></div>
+          <div class="col-md-2">
+            <ol data-bind="foreach: listOfMarkers">
+              <li data-bind="text: name"></li>
+            </ol>
+          </div>
+          <div class="col-md-8" id="map"></div>
       </div>
   </div>
 

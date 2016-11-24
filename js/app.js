@@ -6,9 +6,22 @@
 //initial code from Udacity course project 12
 var map, marker, infowindow, bounds;
 var jonkoping = {lat: 57.782614, lng: 14.161788};
-
-//var locations = [];
+var PlaceName;
+//var locations = ko.observableArray([]);
 var markers = [];
+console.log(markers);
+
+var markerTitle;
+console.log(markerTitle);
+
+var observableMarker = ko.observableArray([]);
+
+
+// Idea and the way of doing with knowckoutJS:
+//https://www.packtpub.com/books/content/using-google-maps-apis-knockoutjs
+var AddressModel = function() {
+  this.marker = ko.observable();
+}
 
 function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -69,7 +82,28 @@ function initAutocomplete() {
               position: places.geometry.location
               });
 
-              markers.push(marker);
+              //push marker to array
+              markers.push(marker.title);
+              //push to observable array
+              observableMarker.push({ name: marker.title } );
+
+
+
+
+
+
+
+              markerTitle = marker.title;
+
+              console.log(markerTitle);
+
+              PlaceName = function() {
+                 this.name = ko.observable(markerTitle);
+                 console.log(this.name);
+                 console.log(markerTitle);
+               };
+
+
               //open infowindow of clicked marker
               //REF ref.: google maps API Udacity course
               marker.addListener('click', function() {
@@ -84,6 +118,7 @@ function initAutocomplete() {
               marker.addListener('mouseover', function() {
                 this.setIcon(highlightedIcon);
               });
+
               //Return to default marker icon at mouseout.
               marker.addListener('mouseout', function() {
                 this.setIcon(defaultIcon);
@@ -117,8 +152,25 @@ function initAutocomplete() {
             new google.maps.Size(21,34));
             return markerImage;
           }
+        }
 
-}
+
+
+
+        //observableMarker = ko.observable(marker.title);
+        console.log(observableMarker());
+
+        function AppviewModel() {
+          var self = this;
+          self.listOfMarkers = observableMarker;
+          
+          markers.forEach(function(){
+            self.listOfMarkers.push({ name: markerTitle });
+          });
+        }
+        ko.applyBindings( new AppviewModel());
+
+
 
 /*
         // Bias the SearchBox results towards current map's viewport.
