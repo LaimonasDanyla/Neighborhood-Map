@@ -47,9 +47,9 @@
               <ul id="places"></ul>
           </div>
           <div class="col-md-2">
-            <ol data-bind="foreach: listOfMarkers">
-              <li data-bind="text: name"></li>
-            </ol>
+            <ul id="knockoutList">
+              <li data-bind="text: listInput"></li>
+            </ul>
           </div>
           <div class="col-md-8" id="map"></div>
       </div>

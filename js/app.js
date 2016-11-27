@@ -1,27 +1,23 @@
 
-
-
-
 //Create map with search box
 //initial code from Udacity course project 12
 var map, marker, infowindow, bounds;
 var jonkoping = {lat: 57.782614, lng: 14.161788};
 var PlaceName;
+var toMarkerFromList;
+var markerPosition;
 //var locations = ko.observableArray([]);
+
+var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+var labelIndex = 0;
+
 var markers = [];
-console.log(markers);
 
-var markerTitle;
-console.log(markerTitle);
 
+var observableAddress = ko.observableArray([]);
 var observableMarker = ko.observableArray([]);
 
 
-// Idea and the way of doing with knowckoutJS:
-//https://www.packtpub.com/books/content/using-google-maps-apis-knockoutjs
-var AddressModel = function() {
-  this.marker = ko.observable();
-}
 
 function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -39,7 +35,6 @@ function initAutocomplete() {
           query: 'skola Jönköping',
           type: 'education'
         };
-
 
         var placeList = document.getElementById('places');
 
@@ -68,47 +63,80 @@ function initAutocomplete() {
                 scaledSize: new google.maps.Size(25, 25)
               };
 
-              var li = document.createElement('li');
-              li.innerHTML = '<li>' + '<strong>' +places.name + '</strong>'
-              + '<br>' + places.formatted_address + '</li>';
-              var listInput = placeList.appendChild(li);
-              //map.controls[google.maps.ControlPosition.TOP_LEFT].push(listInput);
 
               marker = new google.maps.Marker({
               map: map,
               icon: icon,
               animation: google.maps.Animation.DROP,
               title: places.name,
+              lable: labels[labelIndex++ % labels.length],
               position: places.geometry.location
               });
 
               //push marker to array
-              markers.push(marker.title);
+              markers.push(marker);
+              //console.log(marker.getTitle());
+
+              //create a list of markers
+              //credit to: http://googlemaps.googlermania.com/google_maps_api_v3/en/map_example_sidebar.html
+              function createMarkerButton(marker) {
+                var li = document.createElement('li');
+                li.innerHTML = '<strong>' + marker.lable + " - " + places.name + '</strong>';
+                var listInput = placeList.appendChild(li);
+                listInput = ko.observable();
+
+                google.maps.event.addDomListener(li, "click", function(){
+                  google.maps.event.trigger(marker, "click");
+                  li.style.cssText = "color: blue";
+                  //marker.setAnimation(google.maps.Animation.BOUNCE);
+                  //marker.setAnimation(null);
+                  toggleBounce();
+                });
+                // array of clicked markers
+                var clickedMarkers = [];
+
+                function toggleBounce() {
+                  if (marker.getAnimation() !== null) {
+                    marker.setAnimation(null);
+                    li.style.cssText = "";
+                    //stopAnimation();
+                  } else {
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                  }
+console.log(clickedMarkers);
+                };
+/*
+                function stopAnimation() {
+                  animatedMarker = marker.getAnimation();
+                  clickedMarkers.push(animatedMarker);
+
+                  for (var i = 0; i < clickedMarkers.length; i++) {
+                    marker.setAnimation(null);
+                };
+              }*/
+
+              }
+
+              createMarkerButton(marker);
+
+
+
+/*
               //push to observable array
-              observableMarker.push({ name: marker.title } );
-
-
-
-
-
-
-
-              markerTitle = marker.title;
-
-              console.log(markerTitle);
-
-              PlaceName = function() {
-                 this.name = ko.observable(markerTitle);
-                 console.log(this.name);
-                 console.log(markerTitle);
-               };
-
+              observableAddress.push(
+                {
+                  name: places.name,
+                  lable: marker.lable
+                }
+               );
+  */
 
               //open infowindow of clicked marker
               //REF ref.: google maps API Udacity course
               marker.addListener('click', function() {
                 populateInfoWindow(this, infowindow);
               });
+
 
               // Define default icon.
               var defaultIcon = marker.icon;
@@ -127,7 +155,7 @@ function initAutocomplete() {
               function populateInfoWindow(marker, infowindow){
                 if(infowindow.marker != marker) {
                   infowindow.markers = marker;
-                  infowindow.setContent('<div>' + marker.title + " " + marker.position + '</div>');
+                  infowindow.setContent('<div>' + marker.title + " " + marker.position + marker.lable + '</div>');
                   infowindow.open(map, marker);
 
                   //clear marker porperty when window is closed
@@ -138,7 +166,10 @@ function initAutocomplete() {
               }
             }
           }
+
+
         }
+
         // This function takes in a COLOR, and then creates a new marker
         // icon of that color. The icon will be 21 px wide by 34 high, have an origin
         // of 0, 0 and be anchored at 10, 34).
@@ -152,24 +183,44 @@ function initAutocomplete() {
             new google.maps.Size(21,34));
             return markerImage;
           }
-        }
+        };
 
 
 
-
-        //observableMarker = ko.observable(marker.title);
-        console.log(observableMarker());
-
+/*
         function AppviewModel() {
           var self = this;
-          self.listOfMarkers = observableMarker;
-          
-          markers.forEach(function(){
-            self.listOfMarkers.push({ name: markerTitle });
+          self.listOfAddresses = observableAddress;
+          //self.listOfMarkers = observableMarker;
+
+          markers.forEach(function(markerItem){
+            //self.listOfAddresses.push( new PlaceName(markerItem) );
+            //self.listOfMarkers.push( new PlaceName(markerItem) );
+
           });
+          //Access the 0th element in the array to set a current markerTitle
+          self.currentAddress = ko.observable( self.listOfAddresses()[0] );
+          //self.currentMarker = ko.observable( self.listOfMarkers()[0] );
+
+          self.getToMarker = function() {
+            //Add function which will note marker when it address is pressed.
+            BindToMarker();
+            console.log('get to marker ' + marker.lable);
+            }
+
+
+          //Getting outside the binding context with $parent.setMarker in index.html
+          self.setAddress = function(clickedAddress) {
+            //self.currentMarker(clickedAddress);
+            self.currentAddress(clickedAddress);
+            console.log('hi ' + marker.title);
+            self.getToMarker(clickedAddress);
+            };
+            console.log('address list' + self.listOfAddresses);
+
         }
         ko.applyBindings( new AppviewModel());
-
+*/
 
 
 /*
