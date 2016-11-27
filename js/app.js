@@ -11,13 +11,24 @@ var markerPosition;
 var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
 
+//array of markers
 var markers = [];
+//array of side list
+var listElements = [];
 
+var requestQuery = 'Jonkoping';
+var requestType = 'Education';
 
-var observableAddress = ko.observableArray([]);
-var observableMarker = ko.observableArray([]);
+var data = {
+  'Locations': {
+    'arrLocations': []
+  }
+};
 
-
+var viewModel = {
+  location: ko.observable(),
+  Locations: ko.observableArray(data.Locations.arrLocations)
+};
 
 function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -27,14 +38,6 @@ function initAutocomplete() {
           mapTypeId: 'roadmap',
           mapTypeControl: false
         });
-
-
-        var request = {
-          location: map.getCenter(),
-          radius: '1000',
-          query: 'skola Jönköping',
-          type: 'education'
-        };
 
         var placeList = document.getElementById('places');
 
@@ -47,9 +50,38 @@ function initAutocomplete() {
         // mouses over the marker.
         var highlightedIcon = makeMarkerIcon('FFFF24')
 
+        var request = {
+          location: map.getCenter(),
+          query: "skola Jönköping",
+          type: ["Education", "lodging", "restaurant"]
+        };
 
         var service = new google.maps.places.PlacesService(map);
         service.textSearch(request, callback);
+
+        // Add function which clears other than the selected markers
+        viewModel.Locations.subscribe(function (newValue) {
+          console.debug("changing", newValue);
+          //remove marker items
+          for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(null);
+          }
+          //remove list view items
+          for (var j = 0; j < listElements.length; j++) {
+            listElements[j].style.display = "none";
+          }
+          //markers = [];
+
+          var requestUser = {
+            location: map.getCenter(),
+            radius: 5000,
+            query: requestQuery,
+            type: newValue
+          };
+          service.textSearch(requestUser, callback);
+        });
+        viewModel.Locations.notifySubscribers();
+
 
         function callback(results, status) {
           if (status == google.maps.places.PlacesServiceStatus.OK) {
@@ -81,9 +113,10 @@ function initAutocomplete() {
               //credit to: http://googlemaps.googlermania.com/google_maps_api_v3/en/map_example_sidebar.html
               function createMarkerButton(marker) {
                 var li = document.createElement('li');
-                li.innerHTML = '<strong>' + marker.lable + " - " + places.name + '</strong>';
-                var listInput = placeList.appendChild(li);
-                listInput = ko.observable();
+                li.innerHTML = '<strong>' + marker.title + '</strong>';
+                var listView = placeList.appendChild(li);
+                listElements.push(listView);
+
 
                 google.maps.event.addDomListener(li, "click", function(){
                   google.maps.event.trigger(marker, "click");
@@ -99,37 +132,16 @@ function initAutocomplete() {
                   if (marker.getAnimation() !== null) {
                     marker.setAnimation(null);
                     li.style.cssText = "";
-                    //stopAnimation();
                   } else {
                     marker.setAnimation(google.maps.Animation.BOUNCE);
-                  }
-console.log(clickedMarkers);
-                };
-/*
-                function stopAnimation() {
-                  animatedMarker = marker.getAnimation();
-                  clickedMarkers.push(animatedMarker);
 
-                  for (var i = 0; i < clickedMarkers.length; i++) {
-                    marker.setAnimation(null);
+                  }
                 };
-              }*/
 
               }
 
               createMarkerButton(marker);
 
-
-
-/*
-              //push to observable array
-              observableAddress.push(
-                {
-                  name: places.name,
-                  lable: marker.lable
-                }
-               );
-  */
 
               //open infowindow of clicked marker
               //REF ref.: google maps API Udacity course
@@ -184,43 +196,9 @@ console.log(clickedMarkers);
             return markerImage;
           }
         };
+        ko.applyBindings(viewModel);
 
 
-
-/*
-        function AppviewModel() {
-          var self = this;
-          self.listOfAddresses = observableAddress;
-          //self.listOfMarkers = observableMarker;
-
-          markers.forEach(function(markerItem){
-            //self.listOfAddresses.push( new PlaceName(markerItem) );
-            //self.listOfMarkers.push( new PlaceName(markerItem) );
-
-          });
-          //Access the 0th element in the array to set a current markerTitle
-          self.currentAddress = ko.observable( self.listOfAddresses()[0] );
-          //self.currentMarker = ko.observable( self.listOfMarkers()[0] );
-
-          self.getToMarker = function() {
-            //Add function which will note marker when it address is pressed.
-            BindToMarker();
-            console.log('get to marker ' + marker.lable);
-            }
-
-
-          //Getting outside the binding context with $parent.setMarker in index.html
-          self.setAddress = function(clickedAddress) {
-            //self.currentMarker(clickedAddress);
-            self.currentAddress(clickedAddress);
-            console.log('hi ' + marker.title);
-            self.getToMarker(clickedAddress);
-            };
-            console.log('address list' + self.listOfAddresses);
-
-        }
-        ko.applyBindings( new AppviewModel());
-*/
 
 
 /*

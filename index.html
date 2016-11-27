@@ -42,14 +42,15 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-2" id="listview">
-          <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+          <p id="searchBar"><strong data-bind="text: location"></strong></p>
+          <p><input type='checkbox' data-bind='checked: Locations' value='gym'>Gyms</p>
+          <p><input type='checkbox' data-bind='checked: Locations' value='park'>Parks</p>
+          <p><input type='checkbox' data-bind='checked: Locations' value='store'>Stores</p>
+          <p><input type='checkbox' data-bind='checked: Locations' value='museum'>Museums</p>
+          <p><input type='checkbox' data-bind='checked: Locations' value='school'>Shools</p>
+          <p>Search:<input data-bind="value: location"></p>
             <h2>Results<h2>
               <ul id="places"></ul>
-          </div>
-          <div class="col-md-2">
-            <ul id="knockoutList">
-              <li data-bind="text: listInput"></li>
-            </ul>
           </div>
           <div class="col-md-8" id="map"></div>
       </div>
