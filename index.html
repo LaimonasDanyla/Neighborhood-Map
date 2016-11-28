@@ -42,14 +42,25 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-2" id="listview">
-          <p id="searchBar"><strong data-bind="text: location"></strong></p>
-          <p><input type='checkbox' data-bind='checked: Locations' value='gym'>Gyms</p>
-          <p><input type='checkbox' data-bind='checked: Locations' value='park'>Parks</p>
-          <p><input type='checkbox' data-bind='checked: Locations' value='store'>Stores</p>
-          <p><input type='checkbox' data-bind='checked: Locations' value='museum'>Museums</p>
-          <p><input type='checkbox' data-bind='checked: Locations' value='school'>Shools</p>
-          <p>Search:<input data-bind="value: location"></p>
-            <h2>Results<h2>
+
+
+          <div class="dropdown">
+            <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Select a type:
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dLabel">
+              <p><input type='checkbox' data-bind='checked: Locations' value='hopsital'>Hospitals</p>
+              <p><input type='checkbox' data-bind='checked: Locations' value='restaurant'>Restaurants</p>
+              <p><input type='checkbox' data-bind='checked: Locations' value='store'>Stores</p>
+              <p><input type='checkbox' data-bind='checked: Locations' value='museum'>Museums</p>
+              <p><input type='checkbox' data-bind='checked: Locations' value='school'>Shools</p>
+            </ul>
+          </div>
+
+
+            <p>Results</p>
+               <div data-bind='text: ko.toJSON(Locations)'></div>
               <ul id="places"></ul>
           </div>
           <div class="col-md-8" id="map"></div>

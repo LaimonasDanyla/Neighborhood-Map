@@ -16,7 +16,7 @@ var markers = [];
 //array of side list
 var listElements = [];
 
-var requestQuery = 'Jonkoping';
+var requestQuery = 'skola Jönköping';
 var requestType = 'Education';
 
 var data = {
@@ -34,7 +34,7 @@ function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
           center: jonkoping,
           zoom: 13,
-          radius: '500',
+          radius: 1000,
           mapTypeId: 'roadmap',
           mapTypeControl: false
         });
@@ -52,14 +52,15 @@ function initAutocomplete() {
 
         var request = {
           location: map.getCenter(),
-          query: "skola Jönköping",
-          type: ["Education", "lodging", "restaurant"]
+          query: requestQuery,
+          type: "Education"
         };
 
         var service = new google.maps.places.PlacesService(map);
         service.textSearch(request, callback);
 
         // Add function which clears other than the selected markers
+        //Credit and ideas for knockoutJS binding: http://jsfiddle.net/53qfm5bz/1/
         viewModel.Locations.subscribe(function (newValue) {
           console.debug("changing", newValue);
           //remove marker items
@@ -70,20 +71,21 @@ function initAutocomplete() {
           for (var j = 0; j < listElements.length; j++) {
             listElements[j].style.display = "none";
           }
-          //markers = [];
 
-          var requestUser = {
+
+          var requestByUser = {
             location: map.getCenter(),
-            radius: 5000,
-            query: requestQuery,
+            query: newValue,
             type: newValue
           };
-          service.textSearch(requestUser, callback);
+
+          service.textSearch(requestByUser, callback);
+  console.log('to callback with requestbyUser');
         });
-        viewModel.Locations.notifySubscribers();
 
 
         function callback(results, status) {
+          console.log('to callback with request');
           if (status == google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
               var places = results[i];
@@ -105,8 +107,6 @@ function initAutocomplete() {
               position: places.geometry.location
               });
 
-              //push marker to array
-              markers.push(marker);
               //console.log(marker.getTitle());
 
               //create a list of markers
@@ -117,13 +117,12 @@ function initAutocomplete() {
                 var listView = placeList.appendChild(li);
                 listElements.push(listView);
 
-
                 google.maps.event.addDomListener(li, "click", function(){
                   google.maps.event.trigger(marker, "click");
                   li.style.cssText = "color: blue";
-                  //marker.setAnimation(google.maps.Animation.BOUNCE);
-                  //marker.setAnimation(null);
+
                   toggleBounce();
+
                 });
                 // array of clicked markers
                 var clickedMarkers = [];
@@ -132,23 +131,21 @@ function initAutocomplete() {
                   if (marker.getAnimation() !== null) {
                     marker.setAnimation(null);
                     li.style.cssText = "";
+
                   } else {
-                    marker.setAnimation(google.maps.Animation.BOUNCE);
-
-                  }
-                };
-
+                    marker.setAnimation(4, google.maps.Animation.BOUNCE);
+                    marker.setIcon(highlightedIcon);
+                  };
+                }
               }
-
               createMarkerButton(marker);
-
 
               //open infowindow of clicked marker
               //REF ref.: google maps API Udacity course
               marker.addListener('click', function() {
                 populateInfoWindow(this, infowindow);
-              });
 
+              });
 
               // Define default icon.
               var defaultIcon = marker.icon;
@@ -176,10 +173,10 @@ function initAutocomplete() {
                   });
                 }
               }
+              //push marker to array
+              markers.push(marker);
             }
           }
-
-
         }
 
         // This function takes in a COLOR, and then creates a new marker
@@ -196,6 +193,7 @@ function initAutocomplete() {
             return markerImage;
           }
         };
+        viewModel.Locations.notifySubscribers();
         ko.applyBindings(viewModel);
 
 
