@@ -16,8 +16,10 @@ var markers = [];
 //array of side list
 var listElements = [];
 
-var requestQuery = 'skola Jönköping';
-var requestType = 'Education';
+var listElem;
+
+var requestQuery = 'shop Jönköping';
+var requestType = 'store';
 
 var data = {
   'Locations': {
@@ -72,7 +74,6 @@ function initAutocomplete() {
             listElements[j].style.display = "none";
           }
 
-
           var requestByUser = {
             location: map.getCenter(),
             query: newValue,
@@ -82,7 +83,6 @@ function initAutocomplete() {
           service.textSearch(requestByUser, callback);
   console.log('to callback with requestbyUser');
         });
-
 
         function callback(results, status) {
           console.log('to callback with request');
@@ -97,7 +97,6 @@ function initAutocomplete() {
                 scaledSize: new google.maps.Size(25, 25)
               };
 
-
               marker = new google.maps.Marker({
               map: map,
               icon: icon,
@@ -107,7 +106,38 @@ function initAutocomplete() {
               position: places.geometry.location
               });
 
-              //console.log(marker.getTitle());
+              //add Wikipedia information (from intro to Ajax course at Udacity)
+              //Wikipedia AJAX request
+
+              function loadWiki(marker) {
+
+                var $wikiElem = $('#wikipedia-links');
+                $wikiElem.text("");
+
+                var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
+                marker.title + '&format=json&callback=wikiCallback';
+                  var wikiRequestTimeout = setTimeout(function(){
+                      window.alert("failed to get wikipedia resources");
+                  }, 8000);
+
+                  $.ajax({
+                      url: wikiUrl,
+                      dataType: "jsonp",
+                      jsonp: "callback",
+                      success: function( response ) {
+                          var articleList = response[1];
+
+                          for (var i = 0; i < articleList.length; i++) {
+                              articleStr = articleList[i];
+                              var url = 'http://en.wikipedia.org/wiki/' + marker.title;
+                              $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+                          };
+                          clearTimeout(wikiRequestTimeout);
+                      }
+                  });
+                  return false;
+                };
+                loadWiki(marker);
 
               //create a list of markers
               //credit to: http://googlemaps.googlermania.com/google_maps_api_v3/en/map_example_sidebar.html
@@ -115,11 +145,14 @@ function initAutocomplete() {
                 var li = document.createElement('li');
                 li.innerHTML = '<strong>' + marker.title + '</strong>';
                 var listView = placeList.appendChild(li);
+
                 listElements.push(listView);
 
                 google.maps.event.addDomListener(li, "click", function(){
                   google.maps.event.trigger(marker, "click");
                   li.style.cssText = "color: blue";
+                  loadWiki(marker);
+                  //console.log(loadWiki());
 
                   toggleBounce();
 
@@ -164,7 +197,7 @@ function initAutocomplete() {
               function populateInfoWindow(marker, infowindow){
                 if(infowindow.marker != marker) {
                   infowindow.markers = marker;
-                  infowindow.setContent('<div>' + marker.title + " " + marker.position + marker.lable + '</div>');
+                  infowindow.setContent('<div>' + marker.title + '</div>');
                   infowindow.open(map, marker);
 
                   //clear marker porperty when window is closed
@@ -195,98 +228,3 @@ function initAutocomplete() {
         };
         viewModel.Locations.notifySubscribers();
         ko.applyBindings(viewModel);
-
-
-
-
-/*
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener('bounds_changed', function() {
-          searchBox.setBounds(map.getBounds());
-        });
-
-        // Create the search box and link it to the UI element.
-        var input = document.getElementById('pac-input');
-        var searchBox = new google.maps.places.SearchBox(input);
-
-        // For each place, get the icon, name, and infowindow.
-        infowindow = new google.maps.InfoWindow();
-        bounds = new google.maps.LatLngBounds();
-
-
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-
-        searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
-          console.log(places);
-
-          if (places.length == 0) {
-            return;
-          }
-
-          // Clear out the old markers.
-          markers.forEach(function(marker) {
-            marker.setMap(null);
-            // Clear old list with the new search.
-            placeList.innerHTML = "";
-          });
-
-          markers = [];
-
-          places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
-            }
-
-            var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };
-
-            // Create a marker for each place.
-              var marker = new google.maps.Marker({
-                map: map,
-                icon: icon,
-                title: place.name,
-                position: place.geometry.location
-              });
-            markers.push(marker);
-            //add searchnresults to place listview
-            placeList.innerHTML += '<li>' + place.name + "" +
-            place.formatted_address + '</li>';
-
-
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
-            } else {
-              bounds.extend(place.geometry.location);
-            };
-
-            //open infowindow of clicked marker
-            //REF ref.: google maps API Udacity course
-            marker.addListener('click', function() {
-            populateInfoWindow(this, infowindow);
-            });
-            function populateInfoWindow(marker, infowindow){
-              if(infowindow.markers != marker) {
-                infowindow.markers = marker;
-                infowindow.setContent('<div>' + marker.title + place.formatted_address + '</div>');
-                infowindow.open(map, marker);
-                //clear marker porperty when window is closed
-                infowindow.addListener('closeclick', function() {
-                  infowindow.marker = null;
-                });
-              }
-            }
-          });
-          map.fitBounds(bounds);
-        });
-      //  google.maps.event.addDomListener( window, 'load', initialize );
-      }
-*/

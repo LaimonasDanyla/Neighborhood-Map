@@ -42,8 +42,6 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-2" id="listview">
-
-
           <div class="dropdown">
             <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Select a type:
@@ -57,14 +55,17 @@
               <p><input type='checkbox' data-bind='checked: Locations' value='school'>Shools</p>
             </ul>
           </div>
-
-
             <p>Results</p>
-               <div data-bind='text: ko.toJSON(Locations)'></div>
+               <!--<div data-bind='text: ko.toJSON(Locations)'></div>-->
               <ul id="places"></ul>
           </div>
-          <div class="col-md-8" id="map"></div>
+          <div class="col-md-10" id="map"></div>
       </div>
+      <div class="wikipedia-container">
+        <h4 id="wikipedia-header">Relevant Wikipedia Links:</h4>
+        <ul id="wikipedia-links"></ul>
+    </div>
+    </div>
   </div>
 
 
