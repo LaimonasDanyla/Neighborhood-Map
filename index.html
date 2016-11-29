@@ -6,26 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 <title>Neighborhood map project</title>
 <style>
-      body {
-        100%;
-      }
-      row {
-        margin: 0px;
-      }
+
 
        #listview {
          height:100%;
        }
        #map {
-         height:400px;
-         padding: 0px;
-         margin-top: 5px;
+         height:100%;
         }
 
        #places{
       font-size: 12px;
        }
 
+       button {
+         width: 100%;
+       }
+
+       .list-group-item {
+         padding: 0px;
+         margin: 0px;
+       }
+
+       #places, #wikipedia-links {
+         height: 200px;
+         overflow-y: auto;
+         width: 100%;
+       }
 </style>
 
 <!--Add bootstrap links-->
@@ -39,35 +46,36 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container">
       <div class="row">
-        <div class="col-md-2" id="listview">
-          <div class="dropdown">
-            <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Select a type:
-              <span class="caret"></span>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dLabel">
-              <p><input type='checkbox' data-bind='checked: Locations' value='hopsital'>Hospitals</p>
-              <p><input type='checkbox' data-bind='checked: Locations' value='restaurant'>Restaurants</p>
-              <p><input type='checkbox' data-bind='checked: Locations' value='store'>Stores</p>
-              <p><input type='checkbox' data-bind='checked: Locations' value='museum'>Museums</p>
-              <p><input type='checkbox' data-bind='checked: Locations' value='school'>Shools</p>
-            </ul>
+        <div class="col-md-8">
+          <div class="embed-responsive embed-responsive-4by3">
+            <object class="embed-responsive-item" id="map"></object>
           </div>
-            <p>Results</p>
-               <!--<div data-bind='text: ko.toJSON(Locations)'></div>-->
-              <ul id="places"></ul>
-          </div>
-          <div class="col-md-10" id="map"></div>
+        </div>
+        <div class="col-md-4" id="listview">
+            <div class="dropdown">
+              <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Select a type:
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dLabel">
+                <div><input type='checkbox' data-bind='checked: Locations' value='hopsital'>Hospitals</div>
+                <div><input type='checkbox' data-bind='checked: Locations' value='restaurant'>Restaurants</div>
+                <div><input type='checkbox' data-bind='checked: Locations' value='store'>Stores</div>
+                <div><input type='checkbox' data-bind='checked: Locations' value='museum'>Museums</div>
+                <div><input type='checkbox' data-bind='checked: Locations' value='education'>Shools</div>
+              </ul>
+            </div>
+            <h3>Results for Jonkoping, SE</h3>
+              <div id="places"></div>
+              <div>
+                <h4 id="wikipedia-header">Relevant Wikipedia Links:</h4>
+                <ul id="wikipedia-links"></ul>
+              </div>
+        </div>
       </div>
-      <div class="wikipedia-container">
-        <h4 id="wikipedia-header">Relevant Wikipedia Links:</h4>
-        <ul id="wikipedia-links"></ul>
     </div>
-    </div>
-  </div>
-
 
 
     <script async defer

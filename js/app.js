@@ -18,8 +18,8 @@ var listElements = [];
 
 var listElem;
 
-var requestQuery = 'shop Jönköping';
-var requestType = 'store';
+var requestQuery = 'hotel Jönköping';
+var requestType = 'city';
 
 var data = {
   'Locations': {
@@ -45,7 +45,11 @@ function initAutocomplete() {
 
         //Set the boundaries to fit everythign the user can see
         // It captures the South-West adn North-East corners of the viewport
-        var bounds = new google.maps.LatLngBounds();
+        //var bounds = new google.maps.LatLngBounds();
+
+        // bounds for text search.
+        var bounds = map.getBounds();
+
         infowindow = new google.maps.InfoWindow();
 
         // Create a "highlighted location" marker color for when the user
@@ -53,9 +57,10 @@ function initAutocomplete() {
         var highlightedIcon = makeMarkerIcon('FFFF24')
 
         var request = {
-          location: map.getCenter(),
+          location: jonkoping,
           query: requestQuery,
-          type: "Education"
+          bounds: bounds,
+          type: requestType
         };
 
         var service = new google.maps.places.PlacesService(map);
@@ -75,17 +80,36 @@ function initAutocomplete() {
           }
 
           var requestByUser = {
-            location: map.getCenter(),
+            location: jonkoping,
+            bounds: bounds,
             query: newValue,
             type: newValue
           };
 
-          service.textSearch(requestByUser, callback);
-  console.log('to callback with requestbyUser');
+          //Allow to check only one box.
+          //Credit to: http://stackoverflow.com/questions/29389971/select-only-one-checkbox-in-group
+          $(function(){
+        		$("input").change(function(e) {
+        			if($('input:checked').length==1) {
+        				$("input:not(:checked)").attr("disabled", true);
+        			} else {
+        				$("input:not(:checked)").attr("disabled", false);
+        			}
+        		});
+        	});
+
+          //If none of the boxes were checked - use main request with hotels (default)
+          if ( $('input:checked').length > 0 ) {
+            service.textSearch(requestByUser, callback);
+            console.log($('input:checked').length);
+          } else {
+            service.textSearch(request, callback);
+          };
         });
 
+        //Place markers on the map
         function callback(results, status) {
-          console.log('to callback with request');
+          var bounds = new google.maps.LatLngBounds();
           if (status == google.maps.places.PlacesServiceStatus.OK) {
             for (var i = 0; i < results.length; i++) {
               var places = results[i];
@@ -96,26 +120,28 @@ function initAutocomplete() {
                 anchor: new google.maps.Point(17, 34),
                 scaledSize: new google.maps.Size(25, 25)
               };
-
+              //create marker
               marker = new google.maps.Marker({
               map: map,
               icon: icon,
               animation: google.maps.Animation.DROP,
               title: places.name,
-              lable: labels[labelIndex++ % labels.length],
+              label: labels[labelIndex++ % labels.length],
               position: places.geometry.location
               });
 
               //add Wikipedia information (from intro to Ajax course at Udacity)
               //Wikipedia AJAX request
-
+              var $wikiElem = $('#wikipedia-links');
               function loadWiki(marker) {
-
-                var $wikiElem = $('#wikipedia-links');
+                //clear old elements
                 $wikiElem.text("");
 
+                //encode marker title characters for url:
+                var markerTitleEscape = escape(marker.title);
+
                 var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
-                marker.title + '&format=json&callback=wikiCallback';
+                markerTitleEscape + '&format=json&callback=wikiCallback';
                   var wikiRequestTimeout = setTimeout(function(){
                       window.alert("failed to get wikipedia resources");
                   }, 8000);
@@ -126,24 +152,29 @@ function initAutocomplete() {
                       jsonp: "callback",
                       success: function( response ) {
                           var articleList = response[1];
-
                           for (var i = 0; i < articleList.length; i++) {
                               articleStr = articleList[i];
-                              var url = 'http://en.wikipedia.org/wiki/' + marker.title;
-                              $wikiElem.append('<li><a href="' + url + '">' + articleStr + '</a></li>');
-                          };
+                              var url = 'http://en.wikipedia.org/wiki/' + markerTitleEscape;
+                              var wikiLinks = $wikiElem.append('<li id="wikiList"><a href="' + url + '">' + articleStr + '</a></li>');
+
+                              if (wikiLinks.length === 0) {
+                                $("#wikipedia-links").append("<li>No information from Wikipedia</li>");
+                                };
                           clearTimeout(wikiRequestTimeout);
+                          };
                       }
                   });
-                  return false;
-                };
+                  return false
+                }
+                //Call wikipedia information requesting function for clicked list name
                 loadWiki(marker);
 
-              //create a list of markers
+              //create a list of markers for a selected types of locations
               //credit to: http://googlemaps.googlermania.com/google_maps_api_v3/en/map_example_sidebar.html
               function createMarkerButton(marker) {
-                var li = document.createElement('li');
-                li.innerHTML = '<strong>' + marker.title + '</strong>';
+                var li = document.createElement('div');
+                li.innerHTML = '<button type="button" class="list-group-item">'
+                + marker.label + ' - ' + marker.title + '</button>';
                 var listView = placeList.appendChild(li);
 
                 listElements.push(listView);
@@ -151,26 +182,23 @@ function initAutocomplete() {
                 google.maps.event.addDomListener(li, "click", function(){
                   google.maps.event.trigger(marker, "click");
                   li.style.cssText = "color: blue";
-                  loadWiki(marker);
-                  //console.log(loadWiki());
-
                   toggleBounce();
+                  loadWiki(marker);
 
-                });
-                // array of clicked markers
-                var clickedMarkers = [];
 
+                //Handle marker animation and list styles
                 function toggleBounce() {
                   if (marker.getAnimation() !== null) {
                     marker.setAnimation(null);
                     li.style.cssText = "";
-
                   } else {
                     marker.setAnimation(4, google.maps.Animation.BOUNCE);
                     marker.setIcon(highlightedIcon);
                   };
                 }
-              }
+              });
+            }
+              //call function that creates markers for selected locations
               createMarkerButton(marker);
 
               //open infowindow of clicked marker
@@ -193,24 +221,32 @@ function initAutocomplete() {
               marker.addListener('mouseout', function() {
                 this.setIcon(defaultIcon);
               });
-
+              //Create infowindow for marker.
               function populateInfoWindow(marker, infowindow){
                 if(infowindow.marker != marker) {
                   infowindow.markers = marker;
-                  infowindow.setContent('<div>' + marker.title + '</div>');
+                  infowindow.setContent('<div>' + marker.label + ' - ' + marker.title + '</div>');
                   infowindow.open(map, marker);
 
-                  //clear marker porperty when window is closed
+                  //clear marker porperty when window is closed.
                   infowindow.addListener('closeclick', function() {
                     infowindow.marker = null;
                   });
                 }
               }
-              //push marker to array
+              //push marker to array.
               markers.push(marker);
+              if (places.geometry.viewport) {
+                // Only geocodes have viewport.
+                bounds.union(places.geometry.viewport);
+              } else {
+                bounds.extend(places.geometry.location);
+              }
             }
+            map.fitBounds(bounds);
           }
-        }
+        };
+
 
         // This function takes in a COLOR, and then creates a new marker
         // icon of that color. The icon will be 21 px wide by 34 high, have an origin
@@ -226,5 +262,15 @@ function initAutocomplete() {
             return markerImage;
           }
         };
+        //Notify on array changes
         viewModel.Locations.notifySubscribers();
+        //apply bindings
         ko.applyBindings(viewModel);
+/*
+        var wikiList = document.getElementById('wikiList');
+        $("window").ready(function() {
+          var wikiListElems = $("#wikipedia-links").children().length;
+          console.log(wikiListElems);
+          $("#wikipedia-header").html("Relevant Wikipedia Links (" + wikiListElems + "):");
+        });
+*/
