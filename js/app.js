@@ -274,3 +274,11 @@ function initAutocomplete() {
           $("#wikipedia-header").html("Relevant Wikipedia Links (" + wikiListElems + "):");
         });
 */
+
+$(document).ready(function() {
+  $('[data-toggle=offcanvas]').click(function() {
+    $('.row-offcanvas').toggleClass('active');
+  });
+});
+
+$('.dropdown-toggle').dropdown()
