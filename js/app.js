@@ -248,7 +248,7 @@ function initAutocomplete() {
       //call to fit markers to map
       map.fitBounds(bounds);
     }
-    return "Cannot get locations, try again."
+    return
   };
 
 
@@ -266,6 +266,7 @@ function initAutocomplete() {
       return markerImage;
     }
   };
+
   //Notify on array changes for knockout part
   viewModel.Locations.notifySubscribers();
   //apply bindings
