@@ -139,7 +139,7 @@ function initAutocomplete() {
           //encode marker title characters for url:
           var markerTitleEscape = escape(marker.title);
           //add wikipedia link + esaped marker title
-          var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' +
+          var wikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' +
           markerTitleEscape + '&format=json&callback=wikiCallback';
           var wikiRequestTimeout = setTimeout(function(){
             window.alert("failed to get wikipedia resources");
