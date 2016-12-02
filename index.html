@@ -1,75 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<title>Neighborhood map project</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Neighborhood map project</title>
 
-<!--Add bootstrap links-->
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <!--Add bootstrap links-->
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
-<link rel="stylesheet" href="styling\style.css">
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <link rel="stylesheet" href="styling/style.css">
 </head>
 <body>
 
   <!--Credit for offcanvas: http://www.bootply.com/z1oEg3qKPM -->
   <!-- top navbar -->
-<div class="page-container">
-  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container">
-    	<div class="navbar-header">
-           <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".sidebar-nav">
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-             <span class="icon-bar"></span>
-           </button>
-           <p class="navbar-brand">Neighborhood map of Jönköping, Sweden</p>
-         </div>
-     </div>
-  </div>
+  <div class="page-container">
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".sidebar-nav">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <p class="navbar-brand">Neighborhood map of Jönköping, Sweden</p>
+        </div>
+      </div>
+    </div>
 
-  <div class="container" id="main-container">
-    <div class="row row-offcanvas row-offcanvas-left">
-      <!-- sidebar -->
-          <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
-            <div id="listview">
-                <h4 id="results">Results for Jönköping, SE</h4>
-                <p><a href="#wikipedia-header">Relevant Wikipedia Links below</a></p>
-                  <div id="places"></div>
-                  <div>
-                    <h4 id="wikipedia-header">Relevant Wikipedia Links:</h4>
-                    <p><a href="#results">Back to top</a></p>
-                    <ul id="wikipedia-links"></ul>
-                  </div>
-                </div>
-              </div> <!-- col-xs-6 -->
+    <div class="container" id="main-container">
+      <div class="row row-offcanvas row-offcanvas-left">
+        <!-- sidebar -->
+        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+          <div id="listview">
+            <h4 id="results">Results for Jönköping, SE</h4>
+            <p><a href="#wikipedia-header">Relevant Wikipedia Links below</a></p>
+            <div id="places"></div>
+            <div>
+              <h4 id="wikipedia-header">Relevant Wikipedia Links:</h4>
+              <p><a href="#results">Back to top</a></p>
+              <ul id="wikipedia-links"></ul>
+            </div>
+          </div>
+        </div> <!-- col-xs-6 -->
 
-                <!-- main area - map -->
-                <div class="col-xs-12 col-sm-9">
-                  <div class="dropdown">
-                    <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Select a type:
-                      <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dLabel">
-                      <div><input type='checkbox' data-bind='checked: Locations' value='hopsital'>Hospitals</div>
-                      <div><input type='checkbox' data-bind='checked: Locations' value='restaurant'>Restaurants</div>
-                      <div><input type='checkbox' data-bind='checked: Locations' value='store'>Stores</div>
-                      <div><input type='checkbox' data-bind='checked: Locations' value='museum'>Museums</div>
-                      <div><input type='checkbox' data-bind='checked: Locations' value='education'>Shools</div>
-                    </ul>
-                  </div>
-                  <div id="map">
-                  </div>
-                </div><!-- /.col-xs-12 main -->
+        <!-- main area - map -->
+        <div class="col-xs-12 col-sm-9" id="main-area">
+          <div class="dropdown">
+            <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Select a type:
+              <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dLabel">
+              <li><input type='checkbox' data-bind='checked: Locations' value='hopsital'>Hospitals</li>
+              <li><input type='checkbox' data-bind='checked: Locations' value='restaurant'>Restaurants</li>
+              <li><input type='checkbox' data-bind='checked: Locations' value='store'>Stores</li>
+              <li><input type='checkbox' data-bind='checked: Locations' value='museum'>Museums</li>
+              <li><input type='checkbox' data-bind='checked: Locations' value='education'>Shools</li>
+            </ul>
+          </div>
+          <div id="map">
+          </div>
+        </div><!-- /.col-xs-12 main -->
       </div> <!--row-->
     </div> <!--container-->
   </div><!--/.page-container-->
@@ -77,12 +77,12 @@
 
 
 
-    <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAN5t62HzSbKb7KGiVMTiQZ-7dkJ4GcKx4&v=3&libraries=places&callback=initAutocomplete">
-    </script>
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAN5t62HzSbKb7KGiVMTiQZ-7dkJ4GcKx4&v=3&libraries=places&callback=initAutocomplete">
+  </script>
 
-    <script src="js/knockout-3.4.1.js"></script>
-    <script src="js/app.js"></script>
+  <script src="js/knockout-3.4.1.js"></script>
+  <script src="js/app.js"></script>
 </body>
 
 </html>
